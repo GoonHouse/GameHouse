@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
@@ -25,17 +25,23 @@ public class StartOptions : MonoBehaviour {
 	private ShowPanels showPanels;										//Reference to ShowPanels script on UI GameObject, to show and hide panels
 
 	
-	void Awake()
-	{
+	void Awake(){
 		//Get a reference to ShowPanels attached to UI object
 		showPanels = GetComponent<ShowPanels> ();
 
 		//Get a reference to PlayMusic attached to UI object
 		playMusic = GetComponent<PlayMusic> ();
-	}
+    }
 
+    void OnEnable() {
+        SceneManager.sceneLoaded += OnLevelFinishedLoading;
+    }
 
-	public void StartButtonClicked()
+    void OnDisable() {
+        SceneManager.sceneLoaded -= OnLevelFinishedLoading;
+    }
+
+    public void StartButtonClicked()
 	{
 		//If changeMusicOnStart is true, fade out volume of music group of AudioMixer by calling FadeDown function of PlayMusic, using length of fadeColorAnimationClip as time. 
 		//To change fade time, change length of animation "FadeToColor"
@@ -63,9 +69,8 @@ public class StartOptions : MonoBehaviour {
 
 	}
 
-	//Once the level has loaded, check if we want to call PlayLevelMusic
-	void OnLevelWasLoaded()
-	{
+    //Once the level has loaded, check if we want to call PlayLevelMusic
+    void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode){
 		//if changeMusicOnStart is true, call the PlayLevelMusic function of playMusic
 		if (changeMusicOnStart)
 		{
@@ -74,8 +79,7 @@ public class StartOptions : MonoBehaviour {
 	}
 
 
-	public void LoadDelayed()
-	{
+	public void LoadDelayed(){
 		//Pause button now works if escape is pressed since we are no longer in Main menu.
 		inMainMenu = false;
 
@@ -86,14 +90,12 @@ public class StartOptions : MonoBehaviour {
 		SceneManager.LoadScene (sceneToStart);
 	}
 
-	public void HideDelayed()
-	{
+	public void HideDelayed(){
 		//Hide the main menu UI element after fading out menu for start game in scene
 		showPanels.HideMenu();
 	}
 
-	public void StartGameInScene()
-	{
+	public void StartGameInScene(){
 		//Pause button now works if escape is pressed since we are no longer in Main menu.
 		inMainMenu = false;
 
@@ -111,8 +113,7 @@ public class StartOptions : MonoBehaviour {
 	}
 
 
-	public void PlayNewMusic()
-	{
+	public void PlayNewMusic(){
 		//Fade up music nearly instantly without a click 
 		playMusic.FadeUp (fastFadeIn);
 		//Play music clip assigned to mainMusic in PlayMusic script
